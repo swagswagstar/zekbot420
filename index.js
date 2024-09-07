@@ -150,7 +150,7 @@ client.on('interactionCreate', async (interaction) => {
       } else if (commandName === 'fm') {
           const userId = interaction.user.id;
           if (!userLastFmTokens[userId]) {
-              return await interaction.reply("This command requires a Last.fm account connected to the bot. If you have one, [click here](https://your-ngrok-url.com/callback) to connect your accounts.");
+              return await interaction.reply("This command requires a **last.fm account** connected to the bot. If you have one, [click here](https://f7b4-31-164-90-246.ngrok-free.app) to connect your accounts.");
           }
 
           try {
