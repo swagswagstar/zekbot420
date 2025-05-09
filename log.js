@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { EmbedBuilder } = require('discord.js');
-const configPath = path.join(__dirname, '../modlogConfig.json');
+const configPath = path.join(__dirname, './modlogConfig.json');
 let modlogConfig = {};
 if (fs.existsSync(configPath)) {
   modlogConfig = JSON.parse(fs.readFileSync(configPath));
