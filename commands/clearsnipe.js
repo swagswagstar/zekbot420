@@ -11,12 +11,10 @@ module.exports = {
       return message.reply('No snipe data to clear in this channel.');
     }
 
-    // Clear the snipe data
     message.client.snipes.delete(channel.id);
     
-    // Log the snipe clear action in modlog
-    logSnipeClear(message.client, message, message.author);  // Log the snipe clear action
+    logSnipeClear(message.client, message, message.author);
 
-    message.reply('Snipe data has been cleared for this channel.');
+    message.reply('✅');
   }
 };

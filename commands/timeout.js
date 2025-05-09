@@ -1,4 +1,4 @@
-const { PermissionFlagsBits } = require('discord.js');
+const { PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 const { logTimeout } = require('../log');
 
 module.exports = {
@@ -25,10 +25,22 @@ module.exports = {
     try {
       await target.timeout(time, reason);
 
-      await target.send(`You have been timed out in **${message.guild.name}**. Reason: ${reason} for ${timeArg}`);
+      const embed = new EmbedBuilder()
+        .setColor('#ff9900') // Orange color for timeout embed
+        .setTitle('Timeout')
+        .setDescription(`You have been timed out in **${message.guild.name}**.`)
+        .addFields(
+          { name: 'Muted By', value: message.author.tag, inline: true },
+          { name: 'Muted At', value: `<t:${Math.floor(Date.now() / 1000)}:R>`, inline: true },
+          { name: 'Reason', value: reason, inline: false },
+          { name: 'Duration', value: timeArg, inline: true }
+        )
+        .setFooter({ text: `Server ID: ${message.guild.id}` })
+        .setTimestamp();
 
+      await target.send({ embeds: [embed] });
       await logTimeout(message.client, message.guild, target, message.author, reason, timeArg);
-      message.reply(`Successfully timed out ${target.user.tag} for ${timeArg}.`);
+      message.reply(`<:timeout:1370370278873497710>`);
     } catch (err) {
       console.error(err);
       message.reply('There was an error executing the timeout.');

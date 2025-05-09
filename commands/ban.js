@@ -1,4 +1,4 @@
-const { PermissionFlagsBits } = require('discord.js');
+const { PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 const { logBan } = require('../log');
 
 module.exports = {
@@ -14,12 +14,26 @@ module.exports = {
     const reason = args.slice(1).join(' ') || 'No reason specified';
 
     try {
-      await target.send(`You were banned from **${message.guild.name}**. Reason: ${reason}`);
-    } catch {}
+      const embed = new EmbedBuilder()
+        .setColor('#ff0000')
+        .setTitle('Ban')
+        .setDescription(`You’ve been banned from **${message.guild.name}**.`)
+        .addFields(
+          { name: 'Banned By', value: message.author.tag, inline: true },
+          { name: 'Banned At', value: `<t:${Math.floor(Date.now() / 1000)}:R>`, inline: true },
+          { name: 'Reason', value: reason, inline: false }
+        )
+        .setFooter({ text: `Server ID: ${message.guild.id}` })
+        .setTimestamp();
+
+      await target.send({ embeds: [embed] });
+    } catch (err) {
+      console.error('Error sending DM to user:', err);
+    }
 
     await target.ban({ reason });
 
     await logBan(message.client, message.guild, target, message.author, reason);
-    message.reply(`✌️`);
+    message.reply(`✌️ ${target.user.tag} has been banned.`);
   }
 };

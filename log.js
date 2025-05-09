@@ -103,14 +103,15 @@ async function logKick(client, guild, user, author, reason) {
     )
     .setTimestamp()
     .setAuthor({
-      name: message.author.tag, 
-      iconURL: message.author.displayAvatarURL(),
+      name: author.tag,
+      iconURL: author.displayAvatarURL(),
     });
+
   modlogChannel.send({ embeds: [embed] });
 }
 
+
 async function logClearMessages(client, message, author, amount, messagesContent) {
-  // Log to the file system
   const filePath = path.join(__dirname, 'cleared_messages.txt');
   
   fs.appendFile(filePath, messagesContent + '\n\n', err => {
@@ -119,14 +120,13 @@ async function logClearMessages(client, message, author, amount, messagesContent
     }
   });
 
-  // Log to the modlog channel with an embed
   const modlogChannel = message.guild.channels.cache.find(ch => ch.name === 'moderator-only');
   if (!modlogChannel) return;
 
   const embed = new EmbedBuilder()
     .setColor('#03fcb6')
     .setTitle('Messages Cleared')
-    .setDescription(`**Actioned By:** ${author.tag}\n**Channel:** ${message.channel.name}`)
+    .setDescription(`**Actioned By:** ${author.tag}\n**Channel:** ${message.channel.name}\nCleared messages have been saved to a file.`)
     .addFields(
       { name: 'Amount Cleared', value: `${amount}`, inline: true },
       { name: 'Cleared By', value: author.tag, inline: true },
@@ -137,14 +137,12 @@ async function logClearMessages(client, message, author, amount, messagesContent
       name: message.author.tag, 
       iconURL: message.author.displayAvatarURL(),
     });
-  // Send the embed with the text file attached
   try {
     await modlogChannel.send({
       embeds: [embed],
       files: [filePath]
     });
 
-    // Delete the file after sending
     fs.unlink(filePath, (err) => {
       if (err) {
         console.error('Failed to delete cleared messages file:', err);
@@ -155,4 +153,49 @@ async function logClearMessages(client, message, author, amount, messagesContent
   }
 }
 
-module.exports = { logMessageDeletion, logSnipeClear, logUnban, logBan, logKick, logClearMessages };
+async function logTimeout(client, guild, user, author, reason, duration) {
+  const modlogChannel = guild.channels.cache.find(channel => channel.name === 'moderator-only');
+  if (!modlogChannel) return;
+
+  const embed = new EmbedBuilder()
+    .setColor('#ffa500')
+    .setTitle('Time Out')
+    .addFields(
+      { name: 'User', value: `${user.tag} (${user.id})`, inline: true },
+      { name: 'Timed Out By', value: author.tag, inline: true },
+      { name: 'Duration', value: duration, inline: true },
+      { name: 'Reason', value: reason, inline: false },
+      { name: 'Time', value: `<t:${Math.floor(Date.now() / 1000)}:R>`, inline: true }
+    )
+    .setTimestamp()
+    .setAuthor({
+      name: author.tag,
+      iconURL: author.displayAvatarURL()
+    });
+
+  modlogChannel.send({ embeds: [embed] });
+}
+
+async function logUntimeout(client, guild, user, author, reason = 'No reason specified') {
+  const modlogChannel = guild.channels.cache.find(channel => channel.name === 'moderator-only');
+  if (!modlogChannel) return;
+
+  const embed = new EmbedBuilder()
+    .setColor('#43b581')
+    .setTitle('User Untimed Out')
+    .addFields(
+      { name: 'User', value: `${user.tag} (${user.id})`, inline: true },
+      { name: 'Untimed Out By', value: author.tag, inline: true },
+      { name: 'Reason', value: reason, inline: false },
+      { name: 'Time', value: `<t:${Math.floor(Date.now() / 1000)}:R>`, inline: true }
+    )
+    .setTimestamp()
+    .setAuthor({
+      name: author.tag,
+      iconURL: author.displayAvatarURL()
+    });
+
+  modlogChannel.send({ embeds: [embed] });
+}
+
+module.exports = { logMessageDeletion, logSnipeClear, logUnban, logBan, logKick, logClearMessages, logTimeout, logUntimeout }; // everytime you add something new that's loggable, add it here
