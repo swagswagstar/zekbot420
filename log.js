@@ -1,9 +1,18 @@
 const fs = require('fs');
 const path = require('path');
 const { EmbedBuilder } = require('discord.js');
+const configPath = path.join(__dirname, '../modlogConfig.json');
+let modlogConfig = {};
+if (fs.existsSync(configPath)) {
+  modlogConfig = JSON.parse(fs.readFileSync(configPath));
+}
 
 async function logMessageDeletion(client, message, author) {
-  const modlogChannel = message.guild.channels.cache.find(channel => channel.name === 'moderator-only');
+  const guildId = message.guild.id;
+  const channelId = modlogConfig[guildId];
+  if (!channelId) return;
+
+  const modlogChannel = message.guild.channels.cache.get(channelId);
   if (!modlogChannel) return;
 
   const embed = new EmbedBuilder()
@@ -25,9 +34,12 @@ async function logMessageDeletion(client, message, author) {
   modlogChannel.send({ embeds: [embed] });
 }
 
-
 async function logSnipeClear(client, message, author) {
-  const modlogChannel = message.guild.channels.cache.find(channel => channel.name === 'moderator-only');
+  const guildId = message.guild.id;
+  const channelId = modlogConfig[guildId];
+  if (!channelId) return;
+
+  const modlogChannel = message.guild.channels.cache.get(channelId);
   if (!modlogChannel) return;
 
   const embed = new EmbedBuilder()
@@ -49,7 +61,11 @@ async function logSnipeClear(client, message, author) {
 }
 
 async function logBan(client, guild, target, moderator, reason) {
-  const modlogChannel = guild.channels.cache.find(channel => channel.name === 'moderator-only');
+  const guildId = guild.id;
+  const channelId = modlogConfig[guildId];
+  if (!channelId) return;
+
+  const modlogChannel = guild.channels.cache.get(channelId);
   if (!modlogChannel) return;
 
   const embed = new EmbedBuilder()
@@ -65,11 +81,16 @@ async function logBan(client, guild, target, moderator, reason) {
       name: message.author.tag, 
       iconURL: message.author.displayAvatarURL(),
     });
+
   modlogChannel.send({ embeds: [embed] });
 }
 
 async function logUnban(client, guild, user, author) {
-  const modlogChannel = guild.channels.cache.find(channel => channel.name === 'moderator-only');
+  const guildId = guild.id;
+  const channelId = modlogConfig[guildId];
+  if (!channelId) return;
+
+  const modlogChannel = guild.channels.cache.get(channelId);
   if (!modlogChannel) return;
 
   const embed = new EmbedBuilder()
@@ -85,11 +106,16 @@ async function logUnban(client, guild, user, author) {
       name: message.author.tag, 
       iconURL: message.author.displayAvatarURL(),
     });
+
   modlogChannel.send({ embeds: [embed] });
 }
 
 async function logKick(client, guild, user, author, reason) {
-  const modlogChannel = guild.channels.cache.find(channel => channel.name === 'moderator-only');
+  const guildId = guild.id;
+  const channelId = modlogConfig[guildId];
+  if (!channelId) return;
+
+  const modlogChannel = guild.channels.cache.get(channelId);
   if (!modlogChannel) return;
 
   const embed = new EmbedBuilder()
@@ -110,7 +136,6 @@ async function logKick(client, guild, user, author, reason) {
   modlogChannel.send({ embeds: [embed] });
 }
 
-
 async function logClearMessages(client, message, author, amount, messagesContent) {
   const filePath = path.join(__dirname, 'cleared_messages.txt');
   
@@ -120,7 +145,11 @@ async function logClearMessages(client, message, author, amount, messagesContent
     }
   });
 
-  const modlogChannel = message.guild.channels.cache.find(ch => ch.name === 'moderator-only');
+  const guildId = message.guild.id;
+  const channelId = modlogConfig[guildId];
+  if (!channelId) return;
+
+  const modlogChannel = message.guild.channels.cache.get(channelId);
   if (!modlogChannel) return;
 
   const embed = new EmbedBuilder()
@@ -154,7 +183,11 @@ async function logClearMessages(client, message, author, amount, messagesContent
 }
 
 async function logTimeout(client, guild, user, author, reason, duration) {
-  const modlogChannel = guild.channels.cache.find(channel => channel.name === 'moderator-only');
+  const guildId = guild.id;
+  const channelId = modlogConfig[guildId];
+  if (!channelId) return;
+
+  const modlogChannel = guild.channels.cache.get(channelId);
   if (!modlogChannel) return;
 
   const embed = new EmbedBuilder()
@@ -177,7 +210,11 @@ async function logTimeout(client, guild, user, author, reason, duration) {
 }
 
 async function logUntimeout(client, guild, user, author, reason = 'No reason specified') {
-  const modlogChannel = guild.channels.cache.find(channel => channel.name === 'moderator-only');
+  const guildId = guild.id;
+  const channelId = modlogConfig[guildId];
+  if (!channelId) return;
+
+  const modlogChannel = guild.channels.cache.get(channelId);
   if (!modlogChannel) return;
 
   const embed = new EmbedBuilder()
@@ -198,4 +235,4 @@ async function logUntimeout(client, guild, user, author, reason = 'No reason spe
   modlogChannel.send({ embeds: [embed] });
 }
 
-module.exports = { logMessageDeletion, logSnipeClear, logUnban, logBan, logKick, logClearMessages, logTimeout, logUntimeout }; // everytime you add something new that's loggable, add it here
+module.exports = { logMessageDeletion, logSnipeClear, logUnban, logBan, logKick, logClearMessages, logTimeout, logUntimeout };
