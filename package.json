@@ -1,20 +1,19 @@
 {
   "name": "zekbot420",
   "version": "1.0.0",
+  "description": "Your favorite Discord's bot free and open-source alternative.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swagswagstar/zekbot420.git"
+  },
   "author": "zekkie",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "@discordjs/rest": "^2.4.0",
-    "axios": "^1.7.7",
-    "discord-api-types": "^0.37.100",
-    "discord.js": "^14.16.1",
-    "express": "^4.19.2",
-    "ms": "^2.1.3"
-  }
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/swagswagstar/zekbot420/issues"
+  },
+  "homepage": "https://github.com/swagswagstar/zekbot420#readme"
 }
