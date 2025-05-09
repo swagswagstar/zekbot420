@@ -1,7 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
-const config = require('./config.json');
+const config = {
+  token: process.env.TOKEN,
+  prefix: process.env.PREFIX
+};
+
 const { logMessageDeletion, logSnipeClear } = require('./log'); // Import the log module
 
 const client = new Client({
