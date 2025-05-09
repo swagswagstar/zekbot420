@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { logMessageDeletion } = require('../log'); // Import the log module
 
 module.exports = {
   name: 'clear',
@@ -34,10 +35,9 @@ module.exports = {
     await message.delete();
     await message.channel.bulkDelete(amount, true);
 
-    // Find the modlog channel
+    // Log the clear action in modlog
     const modlogChannel = message.guild.channels.cache.find(ch => ch.name === 'moderator-only');
     if (modlogChannel) {
-      // Attach the file and send the log message
       modlogChannel.send({
         content: `**${message.author.tag}** cleared ${amount} messages in ${message.channel.name}.`,
         files: [filePath]  // Attach the .txt file with the cleared messages
@@ -55,5 +55,8 @@ module.exports = {
 
     // Send confirmation and delete the message after 5 seconds
     message.channel.send(`Cleared ${amount} messages.`).then(msg => msg.delete({ timeout: 5000 }));
+
+    // Log this action to modlog
+    await logMessageDeletion(message.client, message, message.author);  // Log the deletion action
   }
 };
