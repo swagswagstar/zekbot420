@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/swagswagstar/zekbot420/issues"
   },
-  "homepage": "https://github.com/swagswagstar/zekbot420#readme"
+  "homepage": "https://github.com/swagswagstar/zekbot420#readme",
+  "dependencies": {
+    "discord.js": "^14.19.3"
+  }
 }
