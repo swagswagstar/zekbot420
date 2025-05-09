@@ -1,9 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const { logMessageDeletion } = require('../log'); // Import the log module
+const { logClearMessages } = require('../log'); // Import the log module
 
 module.exports = {
   name: 'clear',
+  aliases: ['purge'],
   async execute(message, args) {
     if (!args[0] || isNaN(args[0])) {
       return message.reply('Please specify the number of messages to clear.');
@@ -11,52 +12,19 @@ module.exports = {
 
     const amount = parseInt(args[0]);
 
-    if (amount <= 0 || amount > 100) {
-      return message.reply('You can only clear between 1 and 100 messages.');
+    if (amount <= 0) {
+      return message.reply('You can only clear more than 0 messages.');
     }
 
-    // Fetch messages to clear
     const messages = await message.channel.messages.fetch({ limit: amount });
 
-    // Collect the content of the cleared messages
     const messagesContent = messages.map(msg => `[${msg.author.tag}] (${msg.createdAt}): ${msg.content}`).join('\n');
 
-    // Define the file path
-    const filePath = path.join(__dirname, 'cleared_messages.txt');
-
-    // Save the messages to a .txt file
-    fs.appendFile(filePath, messagesContent + '\n\n', err => {
-      if (err) {
-        console.error('Failed to save cleared messages:', err);
-      }
-    });
-
-    // Delete the messages
     await message.delete();
-    await message.channel.bulkDelete(amount, true);
+    await message.channel.bulkDelete(messages, true);
 
-    // Log the clear action in modlog
-    const modlogChannel = message.guild.channels.cache.find(ch => ch.name === 'moderator-only');
-    if (modlogChannel) {
-      modlogChannel.send({
-        content: `**${message.author.tag}** cleared ${amount} messages in ${message.channel.name}.`,
-        files: [filePath]  // Attach the .txt file with the cleared messages
-      }).then(() => {
-        // Optionally, clean up the file after sending it
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.error('Failed to delete cleared messages file:', err);
-          }
-        });
-      }).catch(err => {
-        console.error('Failed to send log with file attachment:', err);
-      });
-    }
+    await logClearMessages(message.client, message, message.author, amount, messagesContent);
 
-    // Send confirmation and delete the message after 5 seconds
     message.channel.send(`Cleared ${amount} messages.`).then(msg => msg.delete({ timeout: 5000 }));
-
-    // Log this action to modlog
-    await logMessageDeletion(message.client, message, message.author);  // Log the deletion action
   }
 };

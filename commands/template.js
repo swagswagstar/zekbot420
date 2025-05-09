@@ -1,4 +1,5 @@
-const { logSnipeClear } = require('../log'); // If it's a moderation command, import the log function
+// If it's a moderation command, import the log function
+// const { addthefunctionfirst } = require('../log'); 
 
 module.exports = {
   name: 'yourcommandname', // Replace with your command name
@@ -7,6 +8,6 @@ module.exports = {
 
     // have fun lol
     
-    message.reply('Snipe data has been cleared for this channel.');
+    message.reply('your message here lol'); // Replace with your message
   }
 };

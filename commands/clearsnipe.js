@@ -1,4 +1,4 @@
-const { logSnipeClear } = require('../log'); // Import the log module
+const { logSnipeClear } = require('../log');
 
 module.exports = {
   name: 'clearsnipe',

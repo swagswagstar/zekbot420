@@ -1,13 +1,18 @@
+const { EmbedBuilder } = require('discord.js');
+
 module.exports = {
   name: 'avatar',
-  aliases: ['av', 'pfp'],  // Add pfp as an alias as well
+  aliases: ['av', 'pfp'],
   execute(message, args) {
-    // Check if the first argument is a mention or not
     const user = message.mentions.users.first() || message.author;
-    
-    // Send the avatar URL as a reply
-    message.reply({
-      content: `${user.username}'s avatar: ${user.displayAvatarURL({ format: 'png', dynamic: true, size: 512 })}`
-    });
+
+    const embed = new EmbedBuilder()
+      .setTitle(`${user.username}'s Avatar`)
+      .setImage(user.displayAvatarURL({ extension: 'png', dynamic: true, size: 512 }))
+      .setColor('#3498db')
+      .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) })
+      .setTimestamp();
+
+    message.reply({ embeds: [embed] });
   }
 };
